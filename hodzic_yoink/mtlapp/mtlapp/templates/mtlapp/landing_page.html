@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<title>312th Landing Page</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="icon" type="image/x-icon" href="https://media.defense.gov/2008/Sep/12/2000680371/700/700/0/080912-F-JZ033-863.JPG">
+<style type=text/css>
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background-color: #696969;
+}
+
+nav li a {
+  padding: 0 10px;
+}
+
+body {
+  background-color: #292929;
+}
+  
+li {
+  float: left;
+}
+  
+nav li {
+  display: block;
+  color: white;
+  text-align: center;
+  border-width: 5px 5px 0 5px;
+  text-decoration: none;
+  padding: 14px 16px;
+}
+
+li a:hover {
+  background-color: #DC071b;
+}
+
+.landing_header {
+  background-color: #292929;
+}
+
+.header_text {
+  color: #FFFFFF;
+  opacity: 0.87;
+  padding: 16px;
+}
+
+.tab_text {
+  color: #FFFFFF;
+  opacity: 0.87;
+}
+  
+</style>
+  
+<body>
+
+<div class="landing_header">
+  <div class="header_text"><h1>312th TRS Landing Page</h1></div>
+</div>
+  
+<form method="post">
+  {% csrf_token %}
+
+<nav>
+  <ul>
+    <div class="tab_text">
+    <li><a style="text-decoration:none" href="mtl_page">MTL Page</a></li>
+    <li><a style="text-decoration:none" href="cq_page">CQ Page</a></li>
+    <li><a style="text-decoration:none" href="admin">Admin</a></li>
+    <li><a style="text-decoration:none" href="credits">Credits</a></li>
+    </div>
+  </ul>
+</nav>
+
+<div class="container">
+  <img src="https://media.defense.gov/2008/Sep/12/2000680371/700/700/0/080912-F-JZ033-863.JPG">
+</div>
+</form>
+</body>
+</html>

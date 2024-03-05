@@ -1,0 +1,10 @@
+import mtlapp.mtlapp.settings as settings
+settings.configure()
+import mtlapp.landing_page.models
+import csv
+
+with open('../Downloads/squadron_data.csv') as f:
+	thing = csv.reader(f)
+	thing = list(thing)
+
+print([row for row in thing])

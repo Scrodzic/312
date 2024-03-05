@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<title>References</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="icon" type="image/x-icon" href="https://media.defense.gov/2008/Sep/12/2000680371/700/700/0/080912-F-JZ033-863.JPG">
+<style type=text/css>
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background-color: #292929;
+}
+
+nav li a {
+  padding: 0 10px;
+}
+
+body {
+  background-color: #121212;
+}
+  
+li {
+  float: left;
+}
+  
+nav li {
+  display: block;
+  color: white;
+  text-align: center;
+  border-width: 5px 5px 0 5px;
+  text-decoration: none;
+  padding: 14px 16px;
+}
+
+li a:hover {
+  background-color: #DC071b;
+}
+
+.landing_header {
+  background-color: #121212;
+}
+
+.header_text {
+  color: #FFFFFF;
+  opacity: 0.87;
+  padding-left: 16px;
+}
+
+.tab_text {
+  color: #FFFFFF;
+  opacity: 0.87;
+}
+
+p {
+  color: #FFFF;
+  display: block;
+  font-size: 1em;
+  margin-top: 0.67em;
+  margin-bottom: 0.67em;
+  margin-left: 0;
+  margin-right: 0;
+}
+h1 {
+  color: #FFFF;
+  display: block;
+  font-size: 2em;
+  margin-top: 0.67em;
+  margin-bottom: 0.67em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+h2 {
+  color: #FFFF;
+  display: block;
+  font-size: 2em;
+  margin-top: 0.67em;
+  margin-bottom: 0.67em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+</style>
+  
+<body>
+
+  <div class="landing_header">
+    <div class="header_text"><h1>CQ Quick Reference Guide</h1></div>
+  </div>
+  <form method="post">
+    {% csrf_token %}
+  
+  <nav>
+    <ul>
+      <div class="tab_text">
+      <li><a style="text-decoration:none" href="{% url 'landing_page' %}">Home Page</a></li>
+      <li><a style="text-decoration:none" href="mtl_page">MTL Page</a></li>
+      <li><a style="text-decoration:none" href="cq_page">CQ Page</a></li>
+      <li><a style="text-decoration:none" href="admin">Admin</a></li>
+      <li><a style="text-decoration:none" href="credits">Credits</a></li>
+      </div>
+    </ul>
+  </nav>
+  </div>
+  </form>
+  {% for x in quick_reference %}
+  <p>{{ x }}</p>
+  <p> </p>
+  {% endfor %}
+ </body>
+</html>

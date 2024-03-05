@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<title>MTL Page</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="icon" type="image/x-icon" href="https://media.defense.gov/2008/Sep/12/2000680371/700/700/0/080912-F-JZ033-863.JPG">
+<style type=text/css>
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background-color: #696969;
+}
+
+nav li a {
+  padding: 0 10px;
+}
+
+body {
+  background-color: #292929;
+}
+  
+li {
+  float: left;
+}
+  
+nav li {
+  display: block;
+  color: white;
+  text-align: center;
+  border-width: 5px 5px 0 5px;
+  text-decoration: none;
+  padding: 14px 16px;
+}
+
+li a:hover {
+  background-color: #DC071b;
+}
+
+.landing_header {
+  background-color: #292929;
+}
+
+.header_text {
+  color: #FFFFFF;
+  opacity: 0.87;
+  padding: 16px;
+}
+
+.tab_text {
+  color: #FFFFFF;
+  opacity: 0.87;
+}
+
+.buttonDiv {
+  background-color: red;
+  width: 260px;
+  height: 130px;
+  font-size: 20px;
+  border-color: white;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+  
+</style>
+  
+<body>
+
+<div class="landing_header">
+  <div class="header_text"><h1>MTL Page</h1></div>
+</div>
+  
+<form method="post">
+  {% csrf_token %}
+
+<nav>
+  <ul>
+    <div class="tab_text">
+    <li><a style="text-decoration:none" href="{% url 'landing_page' %}">Home Page</a></li>
+    <li><a style="text-decoration:none" href="cq_page">CQ Page</a></li>
+    <li><a style="text-decoration:none" href="admin">Admin</a></li>
+    <li><a style="text-decoration:none" href="credits">Credits</a></li>
+    </div>
+  </ul>
+</nav>
+
+</form>
+
+</body>
+</html>
+
+<style>
+  .button_field {
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 520px;
+    z-index: 15;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+.input:hover {
+  background-color: white;
+  color: black;
+}
+  
+body {
+  background-color: #292929;
+}
+  
+input {
+  background-color: #696969;
+  width: 260px;
+  height: 130px;
+  font-size: 20px;
+  border-color: white;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+</style>
+
+
+
+	<div class="button_field">
+		<input type="button" name='alpha_roster' onclick="location.href='{% url 'alpha_roster' %}'" 
+		value="Alpha Roster"></input>
+
+		<input type="button" name='curfew_report' onclick="location.href='{% url 'curfew_report' %}'"
+		value="Curfew Report"></input>
+
+		<input type="button" name='phase_book' onclick="location.href='{% url 'phase_book' %}'"
+		value="Phase Book"></input>
+
+		<input type="button" name='student_notes' onclick="location.href='{% url 'student_notes' %}'"
+		value="Student Notes"></input>
+
+		<input type="button" name='csv_creator' onclick="location.href='{% url 'csv_creator' %}'"
+		value="Squadron Download"></input>
+
+		<input type="button" name='update_phase' onclick="location.href='{% url 'update_phase' %}'"
+		value="Update Phase"></input>
+
+		<input type="button" name='swipe_history' onclick="location.href='{% url 'swipe_history' %}'"
+		value="Swipe History"></input>
+
+		<form method="post" action="/admin/logout/">
+			{% csrf_token %}
+		<button type="submit" class='buttonDiv' >Log Out</button>
+		</form>
+	</div>
+
+<br/><br/>

@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<HTML>
+<style>
+tr:hover {background-color: #000000}
+table {
+	width: 100%;
+}
+	
+body {
+	background-color: #DC071b;
+}
+
+.container {
+	display: flex;
+	align-items: center;
+}
+
+button {
+	margin-left: 10px;
+}
+
+.table_header {
+	background-color: #292929;
+	color: #FFFFFF;
+}
+</style>
+	<head>
+		<link rel="icon" type="image/x-icon" href="https://media.defense.gov/2008/Sep/12/2000680371/700/700/0/080912-F-JZ033-863.JPG">
+	</head>
+	<body>
+		<h1>WELCOME 312th TRS</h1>
+		<h2>Please scan your CAC to sign in/out:</h2>
+
+		<div class="container">
+		<form method="POST" action"{% url 'checkinoutbad' %}" enctype="multipart/form-data" autocomplete='off'>
+			{% csrf_token %}
+			{{form}}
+		<input type="button" name="landing_page" onclick="location.href='{% url 'landing_page' %}'" value="Home Page" ></input>
+		</div>
+		</form>
+        <h3>*ERROR SCANNING CAC, PLEASE SCAN AGAIN*</h3>
+
+        <table border='1'>
+	  <thead class="table_header">
+	  <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Phase</th>
+            <th>In/Out</th>
+            <th>Time</th>
+          </tr>
+	  </thead>
+          {% for x in students %}
+            <tr>
+              <td>{{ x.First_Name }}</td>
+              <td>{{ x.Last_Name }}</td>
+              <td>{{ x.Phase }}</td>
+              <td>{{ x.Checked_In|yesno:'In,Out' }}</td>
+              <td>{{ x.In_Out_Time }}</td>
+            </tr>
+          {% endfor %}
+        </table>
+        
+	</body>
+    
+    <script>
+	const rows = document.querySelectorAll('td');
+	rows.forEach((row) => {
+  		if (row.innerHTML === 'Out') {
+    			const parent = row.parentNode;
+    			parent.style.backgroundColor = 'red';
+  		}
+		if (row.innerHTML === 'In') {
+			const parent = row.parentNode;
+			parent.style.backgroundColor = 'green';
+		}
+	});
+        if ( window.history.replaceState ) {
+            window.history.replaceState( null, null, window.location.href );
+        }
+    </script>
+    
+</HTML>

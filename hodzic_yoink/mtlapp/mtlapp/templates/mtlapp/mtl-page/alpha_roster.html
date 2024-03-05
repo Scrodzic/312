@@ -1,0 +1,16 @@
+<h1>Alpha Roster</h1>
+
+{% load render_table from django_tables2 %}
+<!doctype html>
+<html>
+    <head>
+        <input type="button" name='landing_page' onclick="location.href='{% url 'landing_page' %}'"
+value="Home Page"></input>
+        <title>List of persons</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    </head>
+    <body>
+        {% render_table table %}
+    </body>
+    <button onclick="window.print()">Print this page</button>
+</html>
