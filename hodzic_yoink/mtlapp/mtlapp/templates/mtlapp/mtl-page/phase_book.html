@@ -12,7 +12,7 @@ nav ul {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  background-color: #292929;
+  background-color: #696969;
 }
 
 nav li a {
@@ -20,7 +20,7 @@ nav li a {
 }
 
 body {
-  background-color: #121212;
+  background-color: #292929;
 }
   
 li {
@@ -41,13 +41,13 @@ li a:hover {
 }
 
 .landing_header {
-  background-color: #121212;
+  background-color: #292929;
 }
 
 .header_text {
   color: #FFFFFF;
   opacity: 0.87;
-  padding-left: 16px;
+  padding: 16px;
 }
 
 .tab_text {
@@ -55,35 +55,16 @@ li a:hover {
   opacity: 0.87;
 }
 
-p {
-  color: #FFFF;
-  display: block;
-  font-size: 2em;
-  margin-top: 0.67em;
-  margin-bottom: 0.67em;
-  margin-left: 0;
-  margin-right: 0;
+.buttonDiv {
+  background-color: red;
+  width: 260px;
+  height: 130px;
+  font-size: 20px;
+  border-color: white;
+  transition-duration: 0.4s;
+  cursor: pointer;
 }
-h1 {
-  color: #FFFF;
-  display: block;
-  font-size: 2em;
-  margin-top: 0.67em;
-  margin-bottom: 0.67em;
-  margin-left: 0;
-  margin-right: 0;
-  font-weight: bold;
-}
-h2 {
-  color: #FFFF;
-  display: block;
-  font-size: 2em;
-  margin-top: 0.67em;
-  margin-bottom: 0.67em;
-  margin-left: 0;
-  margin-right: 0;
-  font-weight: bold;
-}
+  
 </style>
   
 <body>
@@ -105,14 +86,48 @@ h2 {
     </div>
   </ul>
 </nav>
-<input type="button" name='phase1' onclick="location.href='{% url 'phase1' %}'" 
-value="Phase 1 Roster"></input>
+<style>
+  .button_field {
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 520px;
+    z-index: 15;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 
-<input type="button" name='phase2' onclick="location.href='{% url 'phase2' %}'"
-value="Phase 2 Roster"></input>
+.input:hover {
+  background-color: white;
+  color: black;
+}
+  
+body {
+  background-color: #292929;
+}
+  
+input {
+  background-color: #696969;
+  width: 260px;
+  height: 130px;
+  font-size: 20px;
+  border-color: white;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+</style>
 
-<input type="button" name='phase3' onclick="location.href='{% url 'phase3' %}'"
-value="Phase 3 Roster"></input>
+	<div class="button_field">
+
+  		{% for x in phase_list %}
+			<input type="button" name={{x}} onclick="location.href='{% url x %}'" 
+			value="{{x}}" Roster"></input>
+  		{% endfor %}
+
+	</div>
+
+
 
 </div>
 </form>

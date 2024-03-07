@@ -5,4 +5,4 @@ class Alpha(tables.Table):
     class Meta:
         model = Student
         template_name = "django_tables2/bootstrap.html"
-        fields = ("First_Name", "Last_Name", "Phase", "Building", "Room", "Phone_Number")
+        fields = ("First_Name", "Last_Name", "Phase.Number", "Building.Organization", "Building.Number", "Room", "Phone_Number")

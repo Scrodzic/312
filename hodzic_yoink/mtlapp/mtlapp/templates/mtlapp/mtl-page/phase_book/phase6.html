@@ -1,7 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-<title>Student Search</title>
+<title>Phase 6</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="icon" type="image/x-icon" href="https://media.defense.gov/2008/Sep/12/2000680371/700/700/0/080912-F-JZ033-863.JPG">
@@ -83,7 +83,6 @@ h2 {
   margin-left: 0;
   margin-right: 0;
   font-weight: bold;
-
 }
 th {
   color: #FFFF
@@ -91,17 +90,12 @@ th {
 td {
   color: #FFFF
 }
-
-.good_text {
-	color: #FFFFFF;
-	opacity: 0.87;
-}
 </style>
   
 <body>
 
 <div class="landing_header">
-<div class="header_text"><h1>Student Search</h1></div>
+<div class="header_text"><h1>Phase 6</h1></div>
 </div>
 <form method="post">
   {% csrf_token %}
@@ -117,68 +111,25 @@ td {
     </div>
   </ul>
 </nav>
-
-<head>
-		<link rel="icon" type="image/x-icon" href="https://media.defense.gov/2008/Sep/12/2000680371/700/700/0/080912-F-JZ033-863.JPG">
-	</head>
-	<body>
-	<div class="good_text">
-		<div class="container">
-
-
-		<form style="float: left" method="POST" action"{% url 'inout' %}" enctype="multipart/form-data" autocomplete='off'>
-			{% csrf_token %}
-			{{form}}
-            <input type="submit", value="Search"></input>
-		</div>
-		</form>
-	</body>
-
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-        <table id="foo" border='1'>
+<thead class="table_header">
         <table border='1'>
           <tr>
-            <th>First Name</th>
             <th>Last Name</th>
-            <th>Phase</th>
-            <th>In/Out</th>
-            <th>Time</th>
-            <th>Building</th>
-            <th>Room</th>
-            <th>Phone Number</th>
+            <th>First Name</th>
+            <th>0525</th>
+            <th>1600</th>
           </tr>
           {% for x in students %}
             <tr>
-              <td>{{ x.First_Name }}</td>
               <td>{{ x.Last_Name }}</td>
-              <td>{{ x.Phase.Number }}</td>
-              <td>{{ x.Checked_In|yesno:'In,Out' }}</td>
-              <td>{{ x.In_Out_Time }}</td>
-	      <td>{{ x.Building.Organization, x.Building.Number }}</td>
-	      <td>{{ x.Room }}</td>
-	      <td>{{ x.Phone_Number }}</td>
+              <td>{{ x.First_Name }}</td>
+              <td>{{value|default:""}}</td>
+              <td>{{value|default:""}}</td>
             </tr>
-	    </div>
           {% endfor %}
         </table>
-
-	</body>
-    <script>
-	const rows = document.querySelectorAll('td');
-	rows.forEach((row) => {
-  		if (row.innerHTML === 'Out') {
-    			const parent = row.parentNode;
-    			parent.style.backgroundColor = 'red';
-  		}
-		if (row.innerHTML === 'In') {
-			const parent = row.parentNode;
-			parent.style.backgroundColor = 'green';
-		}
-	});
-        if ( window.history.replaceState ) {
-            window.history.replaceState( null, null, window.location.href );
-        }
-    </script>
+    <button onclick="window.print()">Print this page</button>
+<body>
 </div>
 </form>
 </body>

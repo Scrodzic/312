@@ -1,11 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
-from .models import Student
-from .models import Curfew
-from .models import Swipe
-from .models import Cq
-from .models import Reference
+from .models import *
 from django.views.generic import ListView
 from django_tables2 import SingleTableView
 from .tables import Alpha
@@ -84,14 +80,15 @@ def phase_book(request):
     The phase book is simply a navigational page to view a table of every student in each phase
     and can be found in mtlapp/mtlapp/templates/mtlapp/mtl_page/phase_book.html.
     '''
-    phase_list = [1,2,3]
+    phase_list = sorted(['phase' + str(x.Number) for x in Phase.objects.all()])
+    
     return render(request, 'mtlapp/mtl-page/phase_book.html', {'phase_list': phase_list})
 
 
 def curfew_report(request):
     '''
     '''
-    to_return = [s for s in Curfew.objects.all()]
+    to_return = [s for s in Violation.objects.all()]
     curfew = []
     twenty_four = []
 
@@ -121,52 +118,6 @@ def student_notes(request):
     return render(request, 'mtlapp/mtl-page/student_notes.html', {'students': to_return})
 
 
-def phase1(request):
-    '''
-    When this function is called it checks all of the students in the database created by the Student model
-    to determine their phase. If they are phase 1, then they are passed to the html to be displayed on the phase 1 page.
-    The phase 1 html can be found in mtlapp/mtlapp/templates/mtlapp/phase_book/phase1.html. Warren spent hours
-    trying to display these because he was stubborn. It's like 5 lines of code XD.
-    '''
-    all_students = [s for s in Student.objects.all()]
-    to_return = []
-    for s in all_students:
-        if s.Phase == 1:
-            to_return.append(s)
-        
-    return render(request, 'mtlapp/mtl-page/phase_book/phase1.html', {'students' : to_return})
-
-
-def phase2(request):
-    '''
-    When this function is called it checks all of the students in the database created by the Student model
-    to determine their phase. If they are phase 2, then they are passed to the html to be displayed on the phase 2 page.
-    The phase 2 html can be found in mtlapp/mtlapp/templates/mtlapp/phase_book/phase2.html.
-    '''
-    all_students = [s for s in Student.objects.all()]
-    to_return = []
-    for s in all_students:
-        if s.Phase == 2:
-            to_return.append(s)
-            
-    return render(request, 'mtlapp/mtl-page/phase_book/phase2.html', {'students' : to_return})
-
-
-def phase3(request):
-    '''
-    When this function is called it checks all of the students in the database created by the Student model
-    to determine their phase. If they are phase 3, then they are passed to the html to be displayed on the phase 3 page.
-    The phase 3 html can be found in mtlapp/mtlapp/templates/mtlapp/phase_book/phase3.html.
-    '''
-    all_students = [s for s in Student.objects.all()]
-    to_return = []
-    for s in all_students:
-        if s.Phase == 3:
-            to_return.append(s)
-        
-    return render(request, 'mtlapp/mtl-page/phase_book/phase3.html', {'students' : to_return})
-
-
 def checkinout(request):
     '''
     When this function is called it searches the student database for the student with the matching CAC UUID.
@@ -181,7 +132,9 @@ def checkinout(request):
     to_return.reverse()
 
     today = datetime.datetime.today()
+    tomorrow = datetime.datime.today() + datetime.timedelta(days=1)
     date = today.weekday()
+    tomorrow_date = tomorrow.weekday()
     now = timezone.localtime()
         
     if request.POST:
@@ -206,41 +159,32 @@ def checkinout(request):
         to_return = sorted(all_students.values(), key=lambda x: x.In_Out_Time)[-35:]
         to_return.reverse()
 
-        if student.Building == '3126 - 312th' and student.Commander_Pass == False and student.Form_4392 == False:
+        if student.Building.Building.Curfew_Applies == True and student.Commanders_Pass == False and student.Form_4392 == False:
 
-            if student.Phase == 3:
-                if ((date == 4 and now < now.replace(hour=3, minute=0, second=0, microsecond=0)) or\
-                                                (date == 6 and now > now.replace(hour=22, minute=0, second=0, microsecond=0)) or\
-                                                (date < 4 and (now > now.replace(hour=22, minute=0, second=0, microsecond=0) or now < now.replace(hour=3, minute=0, second=0, microsecond=0)))):
-
-                    naughty = Curfew.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
-                    naughty.save()
+            schedule = [student.Schedule.Monday, student.Schedule.Tuesday, student.Schedule.Wednesday, student.Schedule.Thursday,\
+                        student.Schedule.Friday, student.Schedule.Saturday, student.Schedule.Sunday]
         
-            elif student.Phase == 2:
-                if ((date == 4 and now < now.replace(hour=3, minute=0, second=0, microsecond=0)) or\
-                                                (date == 6 and now > now.replace(hour=22, minute=0, second=0, microsecond=0)) or\
-                                                (date == 5 and now < now.replace(hour=3, minute=0, second=0, microsecond=0)) or\
-                                                (date < 4 and (now > now.replace(hour=22, minute=0, second=0, microsecond=0) or now < now.replace(hour=3, minute=0, second=0, microsecond=0)))):
+            if student.Checked_In == False and student.Commanders_Pass == False and student.Form_4392 == False and student.Building.Curfew_Applies == True:
 
-                    naughty = Curfew.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
+                if ((schedule[date] == 'Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and now < student.Phase.Prior_Duty_Day_Curfew_To) or\
+                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Duty Day' and now > Prior_Duty_Day_Curfew_From) or\
+                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and (now > Prior_Non_Duty_Day_Curfew_From or now < Prior_Non_Duty_Day_Curfew_To)) or\
+                                                (schedule[date] =='Duty Day' and schedule[tomorrow_date] == 'Duty Day' and (now > Prior_Duty_Day_Curfew_From or now < Prior_Duty_Day_Curfew_To))):
+
+                    naughty = Violation.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
                     naughty.save()
 
-            elif student.Phase == 1:
-                if (now < now.replace(hour=3, minute=0, second=0, microsecond=0) or now > now.replace(hour=22, minute=0, second=0, microsecond=0)):
-
-                    naughty = Curfew.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
-                    naughty.save()
 
         all_students = [s for s in Student.objects.all()]
-        curfew = [s.Student for s in Curfew.objects.all()]
+        curfew = [s.Student for s in Violation.objects.all()]
 
         for student in all_students:
 
             if student not in curfew:
 
-                if student.Building == '3126 - 312th' and now > student.Time_24_hr and student.Commander_Pass == False and student.Form_4392 == False:
+                if student.Building.Number == '3126' and now > student.Time_24_hr and student.Commanders_Pass == False and student.Form_4392 == False:
 
-                    naughty = Curfew.objects.create(Student=student, In_or_Out=student.Checked_In, Time_24_hr_Broken=True)
+                    naughty = Violation.objects.create(Student=student, In_or_Out=student.Checked_In, Time_24_hr_Broken=True)
                     naughty.save()
 
         
@@ -259,7 +203,9 @@ def checkinoutbad(request):
     to_return.reverse()
 
     today = datetime.datetime.today()
+    tomorrow = datetime.datime.today() + datetime.timedelta(days=1)
     date = today.weekday()
+    tomorrow_date = tomorrow.weekday()
     now = timezone.localtime()
         
     if request.POST:
@@ -284,43 +230,40 @@ def checkinoutbad(request):
         to_return = sorted(all_students.values(), key=lambda x: x.In_Out_Time)[-35:]
         to_return.reverse()
 
+    all_students = [s for s in Student.objects.all()]
 
-        if student.Building == '3126 - 312th' and student.Commander_Pass == False and student.Form_4392 == False:
+    for student in all_students:
 
-            if student.Phase == 3:
-                if ((date == 4 and now < now.replace(hour=3, minute=0, second=0, microsecond=0)) or\
-                                                (date == 6 and now > now.replace(hour=22, minute=0, second=0, microsecond=0)) or\
-                                                (date < 4 and (now > now.replace(hour=22, minute=0, second=0, microsecond=0) or now < now.replace(hour=3, minute=0, second=0, microsecond=0)))):
+        schedule = [student.Schedule.Monday, student.Schedule.Tuesday, student.Schedule.Wednesday, student.Schedule.Thursday,\
+                    student.Schedule.Friday, student.Schedule.Saturday, student.Schedule.Sunday]
+        
+        if student.Checked_In == False and student.Commanders_Pass == False and student.Form_4392 == False and student.Building.Curfew_Applies == True:
 
-                    naughty = Curfew.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
-                    naughty.save()     
+            if ((schedule[date] == 'Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and now < student.Phase.Prior_Duty_Day_Curfew_To) or\
+                                            (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Duty Day' and now > Prior_Duty_Day_Curfew_From) or\
+                                            (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and (now > Prior_Non_Duty_Day_Curfew_From or now < Prior_Non_Duty_Day_Curfew_To)) or\
+                                            (schedule[date] =='Duty Day' and schedule[tomorrow_date] == 'Duty Day' and (now > Prior_Duty_Day_Curfew_From or now < Prior_Duty_Day_Curfew_To))):
 
-            elif student.Phase == 2:
-                if ((date == 4 and now < now.replace(hour=3, minute=0, second=0, microsecond=0)) or\
-                                                (date == 6 and now > now.replace(hour=22, minute=0, second=0, microsecond=0)) or\
-                                                (date == 5 and now < now.replace(hour=3, minute=0, second=0, microsecond=0)) or\
-                                                (date < 4 and (now > now.replace(hour=22, minute=0, second=0, microsecond=0) or now < now.replace(hour=3, minute=0, second=0, microsecond=0)))):
-
-                    naughty = Curfew.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
-                    naughty.save()
-
-            elif student.Phase == 1:
-                if (now < now.replace(hour=3, minute=0, second=0, microsecond=0) or now > now.replace(hour=22, minute=0, second=0, microsecond=0)):
-
-                    naughty = Curfew.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
-                    naughty.save()
+                naughty = Violation.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
+                naughty.save()
 
 
         all_students = [s for s in Student.objects.all()]
-        curfew = [s.Student for s in Curfew.objects.all()]
+        curfew = [s.Student for s in Violation.objects.all()]
 
-        for student in all_students:
+        if student.Building.Curfew_Applies == True and student.Commanders_Pass == False and student.Form_4392 == False:
 
-            if student not in curfew:
+            schedule = [student.Schedule.Monday, student.Schedule.Tuesday, student.Schedule.Wednesday, student.Schedule.Thursday,\
+                        student.Schedule.Friday, student.Schedule.Saturday, student.Schedule.Sunday]
+        
+            if student.Checked_In == False and student.Commanders_Pass == False and student.Form_4392 == False and student.Building.Curfew_Applies == True:
 
-                if student.Building == '3126 - 312th' and now > student.Time_24_hr and student.Commander_Pass == False and student.Form_4392 == False:
+                if ((schedule[date] == 'Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and now < student.Phase.Prior_Duty_Day_Curfew_To) or\
+                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Duty Day' and now > Prior_Duty_Day_Curfew_From) or\
+                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and (now > Prior_Non_Duty_Day_Curfew_From or now < Prior_Non_Duty_Day_Curfew_To)) or\
+                                                (schedule[date] =='Duty Day' and schedule[tomorrow_date] == 'Duty Day' and (now > Prior_Duty_Day_Curfew_From or now < Prior_Duty_Day_Curfew_To))):
 
-                    naughty = Curfew.objects.create(Student=student, In_or_Out=student.Checked_In, Time_24_hr_Broken=True)
+                    naughty = Violation.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
                     naughty.save()
 
         
@@ -356,7 +299,7 @@ def update_phase(request):
 
         for student in Student.objects.all():
             if uuid == student.UUID:
-                student.Phase = phase
+                student.Phase.Number = phase
                 student.save()
                 return render(request, 'mtlapp/mtl-page/update_phase.html', {'form' : UpdatePhase})
         
@@ -393,7 +336,7 @@ def cq_page(request):
 def cq_responsibilities(request):
     '''
     '''
-    cq_duties = [duty.html_display() for duty in Cq.objects.all()]
+    cq_duties = [duty.html_display() for duty in Cq_Duty.objects.all()]
     return render(request, 'mtlapp/cq_responsibilities.html', {'cq_duties' : cq_duties})
 
 def references(request):
@@ -417,36 +360,151 @@ def swipe_history(request):
 
 
 def auto_curfew():
-
+    '''
+    '''
     today = datetime.datetime.today()
+    tomorrow = datetime.datime.today() + datetime.timedelta(days=1)
     date = today.weekday()
+    tomorrow_date = tomorrow.weekday()
     now = timezone.localtime()
 
     all_students = [s for s in Student.objects.all()]
 
     for student in all_students:
 
-        if student.Checked_In == False and student.Commander_Pass == False and student.Form_4392 == False and student.Building == '3126 - 312th':
+        schedule = [student.Schedule.Monday, student.Schedule.Tuesday, student.Schedule.Wednesday, student.Schedule.Thursday,\
+                    student.Schedule.Friday, student.Schedule.Saturday, student.Schedule.Sunday]
+        
+        if student.Checked_In == False and student.Commanders_Pass == False and student.Form_4392 == False and student.Building.Curfew_Applies == True:
 
-            if student.Phase == 3:
-                if ((date == 4 and now < now.replace(hour=3, minute=1, second=0, microsecond=0)) or\
-                                                (date == 6 and now > now.replace(hour=21, minute=59, second=0, microsecond=0)) or\
-                                                (date < 4 and (now > now.replace(hour=21, minute=59, second=0, microsecond=0) or now < now.replace(hour=3, minute=1, second=0, microsecond=0)))):
+            if ((schedule[date] == 'Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and now < student.Phase.Prior_Duty_Day_Curfew_To) or\
+                                            (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Duty Day' and now > Prior_Duty_Day_Curfew_From) or\
+                                            (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and (now > Prior_Non_Duty_Day_Curfew_From or now < Prior_Non_Duty_Day_Curfew_To)) or\
+                                            (schedule[date] =='Duty Day' and schedule[tomorrow_date] == 'Duty Day' and (now > Prior_Duty_Day_Curfew_From or now < Prior_Duty_Day_Curfew_To))):
 
-                    naughty = Curfew.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
-                    naughty.save()     
+                naughty = Violation.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
+                naughty.save()
+                
+                
+def phase0(request):
+    '''
+    When this function is called it checks all of the students in the database created by the Student model
+    to determine their phase. If they are phase 1, then they are passed to the html to be displayed on the phase 1 page.
+    The phase 1 html can be found in mtlapp/mtlapp/templates/mtlapp/phase_book/phase1.html. Warren spent hours
+    trying to display these because he was stubborn. It's like 5 lines of code XD.
+    '''
+    all_students = [s for s in Student.objects.all()]
+    to_return = []
+    for s in all_students:
+        if s.Phase.Number == 0:
+            to_return.append(s)
+        
+    return render(request, 'mtlapp/mtl-page/phase_book/phase0.html', {'students' : to_return})
 
-            elif student.Phase == 2:
-                if ((date == 4 and now < now.replace(hour=3, minute=1, second=0, microsecond=0)) or\
-                                                (date == 6 and now > now.replace(hour=21, minute=59, second=0, microsecond=0)) or\
-                                                (date == 5 and now < now.replace(hour=3, minute=1, second=0, microsecond=0)) or\
-                                                (date < 4 and (now > now.replace(hour=21, minute=59, second=0, microsecond=0) or now < now.replace(hour=3, minute=1, second=0, microsecond=0)))):
 
-                    naughty = Curfew.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
-                    naughty.save()
+def phase1(request):
+    '''
+    '''
+    all_students = [s for s in Student.objects.all()]
+    to_return = []
+    for s in all_students:
+        if s.Phase.Number == 1:
+            to_return.append(s)
+        
+    return render(request, 'mtlapp/mtl-page/phase_book/phase1.html', {'students' : to_return})
 
-            elif student.Phase == 1:
-                if (now < now.replace(hour=3, minute=1, second=0, microsecond=0) or now > now.replace(hour=21, minute=59, second=0, microsecond=0)):
 
-                    naughty = Curfew.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
-                    naughty.save()
+def phase2(request):
+    '''
+    '''
+    all_students = [s for s in Student.objects.all()]
+    to_return = []
+    for s in all_students:
+        if s.Phase.Number == 2:
+            to_return.append(s)
+        
+    return render(request, 'mtlapp/mtl-page/phase_book/phase2.html', {'students' : to_return})
+
+
+def phase3(request):
+    '''
+    '''
+    all_students = [s for s in Student.objects.all()]
+    to_return = []
+    for s in all_students:
+        if s.Phase.Number == 3:
+            to_return.append(s)
+        
+    return render(request, 'mtlapp/mtl-page/phase_book/phase3.html', {'students' : to_return})
+
+
+def phase4(request):
+    '''
+    '''
+    all_students = [s for s in Student.objects.all()]
+    to_return = []
+    for s in all_students:
+        if s.Phase.Number == 4:
+            to_return.append(s)
+        
+    return render(request, 'mtlapp/mtl-page/phase_book/phase4.html', {'students' : to_return})
+
+
+def phase5(request):
+    '''
+    '''
+    all_students = [s for s in Student.objects.all()]
+    to_return = []
+    for s in all_students:
+        if s.Phase.Number == 5:
+            to_return.append(s)
+        
+    return render(request, 'mtlapp/mtl-page/phase_book/phase5.html', {'students' : to_return})
+
+
+def phase6(request):
+    '''
+    '''
+    all_students = [s for s in Student.objects.all()]
+    to_return = []
+    for s in all_students:
+        if s.Phase.Number == 6:
+            to_return.append(s)
+        
+    return render(request, 'mtlapp/mtl-page/phase_book/phase6.html', {'students' : to_return})
+
+
+def phase7(request):
+    '''
+    '''
+    all_students = [s for s in Student.objects.all()]
+    to_return = []
+    for s in all_students:
+        if s.Phase.Number == 7:
+            to_return.append(s)
+        
+    return render(request, 'mtlapp/mtl-page/phase_book/phase7.html', {'students' : to_return})
+
+
+def phase8(request):
+    '''
+    '''
+    all_students = [s for s in Student.objects.all()]
+    to_return = []
+    for s in all_students:
+        if s.Phase.Number == 8:
+            to_return.append(s)
+        
+    return render(request, 'mtlapp/mtl-page/phase_book/phase8.html', {'students' : to_return})
+
+
+def phase9(request):
+    '''
+    '''
+    all_students = [s for s in Student.objects.all()]
+    to_return = []
+    for s in all_students:
+        if s.Phase.Number == 9:
+            to_return.append(s)
+        
+    return render(request, 'mtlapp/mtl-page/phase_book/phase9.html', {'students' : to_return})

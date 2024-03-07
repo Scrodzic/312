@@ -1,27 +1,46 @@
 from django.contrib import admin
-import models
+from .models import *
 from django.forms import TextInput
 from django.db import models
+
+@admin.action(description="Give Commander's pass to selected students")
+def give_pass(modeladmin, request, Student):
+    Student.update(Commanders_Pass=True)
+    
+@admin.action(description="Remove Commander's pass from selected students")
+def remove_pass(modeladmin, request, Student):
+    Student.update(Commanders_Pass=False)
+    
+@admin.action(description="Add 4392 for selected students")
+def give_4392(modeladmin, request, Student):
+    Student.update(Form_4392=True)
+    
+@admin.action(description="Remove 4392 for selected students")
+def remove_4392(modeladmin, request, Student):
+    Student.update(Form_4392=False)
+    
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     '''
     This class simply sets up navigational features for the admin page that is built into django.
     '''
-    list_display = ("Last_Name", "First_Name", "Phase", "Building", "Room", "AFSC")
+    list_display = ("Last_Name", "First_Name", "Phase", "Building", "Room", "Specialty")
 
-    list_filter = ("Phase", "AFSC", "Building", "Work_Order", "Form_4392", "Checked_In")
+    list_filter = ("Phase", "Specialty", "Building", "Work_Order", "Form_4392", "Checked_In")
 
     search_fields = ("Last_Name__startswith", )
 
     formfield_overrides = {models.CharField: {'widget': TextInput(attrs={'autocomplete':'off'})}}
+    
+    actions = [give_pass, remove_pass, give_4392, remove_4392]
 
     class Meta:
         ordering = ("Last_Name", "First_Name", )
 
 
-@admin.register(Curfew)
-class CurfewAdmin(admin.ModelAdmin):
+@admin.register(Violation)
+class ViolationAdmin(admin.ModelAdmin):
     '''
     This class simply sets up navigational features for the admin page that is built into django.
     '''
@@ -49,8 +68,8 @@ class SwipeAdmin(admin.ModelAdmin):
         ordering = ("Student.Last_Name", "Student.First_Name", )
 
 
-@admin.register(Cq)
-class CqAdmin(admin.ModelAdmin):
+@admin.register(Cq_Duty)
+class Cq_DutyAdmin(admin.ModelAdmin):
     '''
     '''
     search_fields = ("Duty_Name__startswith",)
@@ -67,7 +86,13 @@ class ReferenceAdmin(admin.ModelAdmin):
 class PhaseAdmin(admin.ModelAdmin):
     '''
     '''
-
+    
+@admin.register(Schedule)
+class ScheduleAdmin(admin.ModelAdmin):
+    '''
+    '''
+    list_display = ("Schedule_Name",)
+    search_fields = ('Schedule_Name__startswith',)
 
 @admin.register(Specialty)
 class SpecialtyAdmin(admin.ModelAdmin):
