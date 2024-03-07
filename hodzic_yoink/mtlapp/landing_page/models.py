@@ -6,10 +6,10 @@ class Phase(models.Model):
     '''
     '''
     Number = models.IntegerField(choices=[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9)])
-    Prior_Duty_Day_Curfew_From = models.TimeField(blank=True, null=True)
-    Prior_Duty_Day_Curfew_To = models.TimeField(blank=True, null=True)
-    Prior_Non_Duty_Day_Curfew_From = models.TimeField(blank=True, null=True)
-    Prior_Non_Duty_Day_Curfew_To = models.TimeField(blank=True, null=True)
+    Duty_Day_Curfew_From = models.TimeField(blank=True, null=True)
+    Duty_Day_Curfew_To = models.TimeField(blank=True, null=True)
+    Non_Duty_Day_Curfew_From = models.TimeField(blank=True, null=True)
+    Non_Duty_Day_Curfew_To = models.TimeField(blank=True, null=True)
     
     def __str__(self):
         return f'{self.Number}'
