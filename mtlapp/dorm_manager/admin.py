@@ -73,6 +73,8 @@ class Cq_DutyAdmin(admin.ModelAdmin):
     '''
     '''
     search_fields = ("Duty_Name__startswith",)
+    
+    formfield_overrides = {models.CharField: {'widget': TextInput(attrs={'autocomplete':'off'})}}
 
 
 @admin.register(Reference)
@@ -80,12 +82,15 @@ class ReferenceAdmin(admin.ModelAdmin):
     '''
     '''
     search_fields = ('Reference_Name__startswith',)
+    
+    formfield_overrides = {models.CharField: {'widget': TextInput(attrs={'autocomplete':'off'})}}
 
 
 @admin.register(Phase)
 class PhaseAdmin(admin.ModelAdmin):
     '''
     '''
+    formfield_overrides = {models.CharField: {'widget': TextInput(attrs={'autocomplete':'off'})}}
     
 @admin.register(Schedule)
 class ScheduleAdmin(admin.ModelAdmin):
@@ -93,25 +98,28 @@ class ScheduleAdmin(admin.ModelAdmin):
     '''
     list_display = ("Schedule_Name",)
     search_fields = ('Schedule_Name__startswith',)
+    formfield_overrides = {models.CharField: {'widget': TextInput(attrs={'autocomplete':'off'})}}
 
 @admin.register(Specialty)
 class SpecialtyAdmin(admin.ModelAdmin):
     '''
     '''
     search_fields = ('Code__startswith',)
+    formfield_overrides = {models.CharField: {'widget': TextInput(attrs={'autocomplete':'off'})}}
     
 
 @admin.register(Rank)
 class RankAdmin(admin.ModelAdmin):
     '''
     '''
-    
+    formfield_overrides = {models.CharField: {'widget': TextInput(attrs={'autocomplete':'off'})}}
 
 @admin.register(Building)
 class BuildingAdmin(admin.ModelAdmin):
     '''
     '''
     search_fields = ('Organization__startswith',)
+    formfield_overrides = {models.CharField: {'widget': TextInput(attrs={'autocomplete':'off'})}}
     
 
 @admin.register(Status)
@@ -119,3 +127,12 @@ class StatusAdmin(admin.ModelAdmin):
     '''
     '''
     search_fields = ('Status_Name__startswith',)
+    formfield_overrides = {models.CharField: {'widget': TextInput(attrs={'autocomplete':'off'})}}
+    
+    
+@admin.register(Banner)
+class BannerAdmin(admin.ModelAdmin):
+    '''
+    '''
+    search_fields = ('Message_Name__startswith',)
+    formfield_overrides = {models.CharField: {'widget': TextInput(attrs={'autocomplete':'off'})}}

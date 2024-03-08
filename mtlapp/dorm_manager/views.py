@@ -128,7 +128,7 @@ def checkinout(request):
     When this function is called it searches the student database for the student with the matching CAC UUID.
     Once the match has been located, the students check in/out time is updated with the current time
     and their status is set to the opposite of what it was previously. In the case of a valid scan,
-    the page is redirected to this same view with an updated list of the 35 most rececent people who scanned.
+    the page is redirected to this same view with an updated list of the 30 most rececent people who scanned.
     In the case of an invalid scan, an almost identical page with an error is redirected to instead.
     This request also checks if the student who scanned is past their curfew and logs the scan in the violation table
     if true. This request also checks if any student in the database hasn't scanned in the past 24 hours and also
@@ -136,15 +136,17 @@ def checkinout(request):
     This html can be found in mtlapp/mtlapp/templates/mtlapp/checkinout.html.
     '''
     all_students = {s.UUID: s for s in Student.objects.all()}
-    to_return = sorted(all_students.values(), key=lambda x: x.In_Out_Time)[-35:]
+    to_return = sorted(all_students.values(), key=lambda x: x.In_Out_Time)[-30:]
     to_return.reverse()
+    
+    banner = [message.html_display() for message in Banner.objects.all()]
 
     today = datetime.datetime.today()
     tomorrow = datetime.datetime.today() + datetime.timedelta(days=1)
     date = today.weekday()
     tomorrow_date = tomorrow.weekday()
     now = timezone.localtime()
-    now = now.time()
+    now_time = now.time()
         
     if request.POST:
 
@@ -154,7 +156,7 @@ def checkinout(request):
             student = all_students[s_uuid]
 
         except KeyError:
-            return render(request, 'mtlapp/checkinoutbad.html', {'form' : ScanForm, 'students' : to_return})
+            return render(request, 'mtlapp/checkinoutbad.html', {'form' : ScanForm, 'students' : to_return, 'banner': banner})
 
         student.Checked_In = not student.Checked_In
         student.In_Out_Time = timezone.now()
@@ -165,7 +167,7 @@ def checkinout(request):
         record.save()
 
         all_students = {s.UUID: s for s in Student.objects.all()}
-        to_return = sorted(all_students.values(), key=lambda x: x.In_Out_Time)[-35:]
+        to_return = sorted(all_students.values(), key=lambda x: x.In_Out_Time)[-30:]
         to_return.reverse()
 
         if student.Building.Curfew_Applies == True and student.Commanders_Pass == False and student.Form_4392 == False:
@@ -175,10 +177,10 @@ def checkinout(request):
         
             if student.Checked_In == False and student.Commanders_Pass == False and student.Form_4392 == False and student.Building.Curfew_Applies == True:
 
-                if ((schedule[date] == 'Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and now < student.Phase.Duty_Day_Curfew_To) or\
-                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Duty Day' and now > student.Phase.Duty_Day_Curfew_From) or\
-                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and (now > student.Phase.Non_Duty_Day_Curfew_From or now < student.Phase.Non_Duty_Day_Curfew_To)) or\
-                                                (schedule[date] =='Duty Day' and schedule[tomorrow_date] == 'Duty Day' and (now > student.Phase.Duty_Day_Curfew_From or now < student.Phase.Duty_Day_Curfew_To))):
+                if ((schedule[date] == 'Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and now_time < student.Phase.Duty_Day_Curfew_To) or\
+                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Duty Day' and now_time > student.Phase.Duty_Day_Curfew_From) or\
+                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and (now_time > student.Phase.Non_Duty_Day_Curfew_From or now_time < student.Phase.Non_Duty_Day_Curfew_To)) or\
+                                                (schedule[date] =='Duty Day' and schedule[tomorrow_date] == 'Duty Day' and (now_time > student.Phase.Duty_Day_Curfew_From or now_time < student.Phase.Duty_Day_Curfew_To))):
 
                     naughty = Violation.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
                     naughty.save()
@@ -197,7 +199,7 @@ def checkinout(request):
                     naughty.save()
 
         
-    return render(request, 'mtlapp/checkinout.html', {'form' : ScanForm, 'students' : to_return})
+    return render(request, 'mtlapp/checkinout.html', {'form' : ScanForm, 'students' : to_return, 'banner': banner})
 
 
 def checkinoutbad(request):
@@ -208,15 +210,17 @@ def checkinoutbad(request):
     for this. It instantly worked without any bugs.
     '''
     all_students = {s.UUID: s for s in Student.objects.all()}
-    to_return = sorted(all_students.values(), key=lambda x: x.In_Out_Time)[-35:]
+    to_return = sorted(all_students.values(), key=lambda x: x.In_Out_Time)[-30:]
     to_return.reverse()
+    
+    banner = [message.html_display() for message in Banner.objects.all()]
 
     today = datetime.datetime.today()
     tomorrow = datetime.datime.today() + datetime.timedelta(days=1)
     date = today.weekday()
     tomorrow_date = tomorrow.weekday()
     now = timezone.localtime()
-    now = now.time()
+    now_time = now.time()
         
     if request.POST:
 
@@ -226,7 +230,7 @@ def checkinoutbad(request):
             student = all_students[s_uuid]
 
         except KeyError:
-            return render(request, 'mtlapp/checkinoutbad.html', {'form' : ScanForm, 'students' : to_return})
+            return render(request, 'mtlapp/checkinoutbad.html', {'form' : ScanForm, 'students' : to_return, 'banner': banner})
 
         student.Checked_In = not student.Checked_In
         student.In_Out_Time = timezone.now()
@@ -237,7 +241,7 @@ def checkinoutbad(request):
         record.save()
 
         all_students = {s.UUID: s for s in Student.objects.all()}
-        to_return = sorted(all_students.values(), key=lambda x: x.In_Out_Time)[-35:]
+        to_return = sorted(all_students.values(), key=lambda x: x.In_Out_Time)[-30:]
         to_return.reverse()
 
         if student.Building.Curfew_Applies == True and student.Commanders_Pass == False and student.Form_4392 == False:
@@ -247,10 +251,10 @@ def checkinoutbad(request):
         
             if student.Checked_In == False and student.Commanders_Pass == False and student.Form_4392 == False and student.Building.Curfew_Applies == True:
 
-                if ((schedule[date] == 'Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and now < student.Phase.Duty_Day_Curfew_To) or\
-                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Duty Day' and now > student.Phase.Duty_Day_Curfew_From) or\
-                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and (now > student.Phase.Non_Duty_Day_Curfew_From or now < student.Phase.Non_Duty_Day_Curfew_To)) or\
-                                                (schedule[date] =='Duty Day' and schedule[tomorrow_date] == 'Duty Day' and (now > student.Phase.Duty_Day_Curfew_From or now < student.Phase.Duty_Day_Curfew_To))):
+                if ((schedule[date] == 'Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and now_time < student.Phase.Duty_Day_Curfew_To) or\
+                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Duty Day' and now_time > student.Phase.Duty_Day_Curfew_From) or\
+                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and (now_time > student.Phase.Non_Duty_Day_Curfew_From or now_time < student.Phase.Non_Duty_Day_Curfew_To)) or\
+                                                (schedule[date] =='Duty Day' and schedule[tomorrow_date] == 'Duty Day' and (now_time > student.Phase.Duty_Day_Curfew_From or now_time < student.Phase.Duty_Day_Curfew_To))):
 
                     naughty = Violation.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
                     naughty.save()
@@ -269,9 +273,9 @@ def checkinoutbad(request):
                     naughty.save()
 
         
-        return render(request, 'mtlapp/checkinout.html', {'form' : ScanForm, 'students' : to_return})
+        return render(request, 'mtlapp/checkinout.html', {'form' : ScanForm, 'students' : to_return, 'banner': banner})
         
-    return render(request, 'mtlapp/checkinoutbad.html', {'form' : ScanForm, 'students' : to_return})
+    return render(request, 'mtlapp/checkinoutbad.html', {'form' : ScanForm, 'students' : to_return, 'banner': banner})
 
 
 def csv_creator(request):

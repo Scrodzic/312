@@ -79,5 +79,9 @@ button {
             window.history.replaceState( null, null, window.location.href );
         }
     </script>
+
+  {% for x in banner %}
+  <h2>{{ x }}</h2>
+  {% endfor %}
     
 </HTML>

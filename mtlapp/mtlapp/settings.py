@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mtlapp',
-    'landing_page',
+    'dorm_manager',
     'django_tables2',
     'django_crontab'
 ]
@@ -131,6 +131,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SESSION_COOKIE_AGE = 10 * 60
 SESSION_SAVE_EVERY_REQUEST = True
 
-CRONJOBS = [('00 22 * * *', 'landing_page.views.auto_curfew'),
-            ('0 0 * * *', 'landing_page.views.auto_curfew')
+CRONJOBS = [('00 22 * * *', 'dorm_manager.views.auto_curfew'),
+            ('0 0 * * *', 'dorm_manager.views.auto_curfew')
 ]

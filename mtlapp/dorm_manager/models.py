@@ -167,3 +167,16 @@ class Reference(models.Model):
 
     def html_display(self):
         return f'{self.Quick_Reference}'
+    
+    
+class Banner(models.Model):
+    '''
+    '''
+    Message_Name = models.CharField(max_length=25)
+    Message = models.CharField(max_length=150)
+    
+    def __str__(self):
+        return f'{self.Message_Name}'
+    
+    def html_display(self):
+        return f'{self.Message}'
