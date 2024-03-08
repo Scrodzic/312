@@ -52,6 +52,8 @@ def mtl_page(request):
     When this function is called, it simply returns a render of the mtl home page html.
     The mtl home page contains navigation to mtl resources
     and can be found in mtlapp/mtlapp/templates/mtlapp/mtl_page.html.
+    The staff_member_required decorator makes the page password protected.
+    This can be configured in the mtlapp/mtlapp/settings.py
     '''
     return render(request, 'mtlapp/mtl_page.html')
 
@@ -87,6 +89,9 @@ def phase_book(request):
 
 def curfew_report(request):
     '''
+    When this function is called, it returns 2 lists of all of the objects in the violation table.
+    The tables are rendered on the curfew report html which can be found in 
+    mtlapp/mtlapp/templates/mtlapp/mtl-page/curfew_report.html.
     '''
     to_return = [s for s in Violation.objects.all()]
     curfew = []
@@ -123,8 +128,11 @@ def checkinout(request):
     When this function is called it searches the student database for the student with the matching CAC UUID.
     Once the match has been located, the students check in/out time is updated with the current time
     and their status is set to the opposite of what it was previously. In the case of a valid scan,
-    the page is redirected to this same view with an updated list of the 10 most rececent people who scanned.
+    the page is redirected to this same view with an updated list of the 35 most rececent people who scanned.
     In the case of an invalid scan, an almost identical page with an error is redirected to instead.
+    This request also checks if the student who scanned is past their curfew and logs the scan in the violation table
+    if true. This request also checks if any student in the database hasn't scanned in the past 24 hours and also
+    logs them once in the violation table.
     This html can be found in mtlapp/mtlapp/templates/mtlapp/checkinout.html.
     '''
     all_students = {s.UUID: s for s in Student.objects.all()}
@@ -286,6 +294,9 @@ def csv_creator(request):
 
 def update_phase(request):
     '''
+    This function contains a form that accepts an input of the available phases and a student's UUID.
+    When the form is submitted, it updates the student's phase with the one selected.
+    The html can be located in mtlapp/mtlapp/mtl-page/update_phase.html.
     '''
     if request.POST:
         uuid = request.POST.get('uuid')
@@ -302,6 +313,10 @@ def update_phase(request):
 
 def inout(request):
     '''
+    This function contains a form that accepts an input of a student's last name
+    When the form is submitted, it returns a render of a table containing some basic information of the student.
+    This is meant for simply searching for a student and locating them based on their in or out status.
+    This html can be located in mtlapp/mtlapp/templates/mtlapp/inout.html.
     '''
     all_students = [s for s in Student.objects.all()]
     to_return = []
@@ -329,12 +344,20 @@ def cq_page(request):
 
 def cq_responsibilities(request):
     '''
+    This function returns all of the objects contained in the cq_duty table.
+    The html rendered displays the CQ responsibilities so that CQ personnel may
+    keep up to date with their required duties. This html may be located in
+    mltapp/mtlapp/templates/mtlapp/cq_responsibilities.html.
     '''
     cq_duties = [duty.html_display() for duty in Cq_Duty.objects.all()]
     return render(request, 'mtlapp/cq_responsibilities.html', {'cq_duties' : cq_duties})
 
 def references(request):
     '''
+    Similarly to the cq_responsibilities function, this function returns all of the objects contained in the references table.
+    The html rendered displays all of the CQ quick references so that CQ personnel may
+    have quick access to pertinent information. This html may be located in
+    mltapp/mtlapp/templates/mtlapp/references.html.
     '''
     quick_reference = [references.html_display() for references in Reference.objects.all()]
     return render(request, 'mtlapp/references.html', {'quick_reference' : quick_reference})
@@ -342,6 +365,10 @@ def references(request):
 
 def swipe_history(request):
     '''
+    This function returns all of the scans in the swipe history table and
+    returns a rendering of an html that displays every scan in the past day.
+    All scans are still visible through the admin page. This html may be located in
+    mltapp/mtlapp/templates/mtlapp/mtl-page/swipe_history.html.
     '''
     all_swipes = [s for s in Swipe.objects.all()]
     to_return = []
@@ -355,6 +382,10 @@ def swipe_history(request):
 
 def auto_curfew():
     '''
+    This function checks all of the student objects to see if on is out past curfew.
+    This is necessary in addition to the check that happens when someone scans because
+    if a student is out before curfew and returns after curfew, they will not be picked up.
+    This function will run based on a crontab cronjob. This can be configured in the settings.py.
     '''
     today = datetime.datetime.today()
     tomorrow = datetime.datime.today() + datetime.timedelta(days=1)
