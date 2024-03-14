@@ -92,6 +92,10 @@ class PhaseAdmin(admin.ModelAdmin):
     '''
     formfield_overrides = {models.CharField: {'widget': TextInput(attrs={'autocomplete':'off'})}}
     
+    class Meta:
+        ordering = ("Phase.Number", )
+        
+    
 @admin.register(Schedule)
 class ScheduleAdmin(admin.ModelAdmin):
     '''
@@ -113,6 +117,10 @@ class RankAdmin(admin.ModelAdmin):
     '''
     '''
     formfield_overrides = {models.CharField: {'widget': TextInput(attrs={'autocomplete':'off'})}}
+    
+    class Meta:
+        ordering = ("Rank.Number", )
+        
 
 @admin.register(Building)
 class BuildingAdmin(admin.ModelAdmin):

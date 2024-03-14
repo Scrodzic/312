@@ -174,16 +174,14 @@ def checkinout(request):
 
             schedule = [student.Schedule.Monday, student.Schedule.Tuesday, student.Schedule.Wednesday, student.Schedule.Thursday,\
                         student.Schedule.Friday, student.Schedule.Saturday, student.Schedule.Sunday]
-        
-            if student.Checked_In == False and student.Commanders_Pass == False and student.Form_4392 == False and student.Building.Curfew_Applies == True:
 
-                if ((schedule[date] == 'Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and now_time < student.Phase.Duty_Day_Curfew_To) or\
-                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Duty Day' and now_time > student.Phase.Duty_Day_Curfew_From) or\
-                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and (now_time > student.Phase.Non_Duty_Day_Curfew_From or now_time < student.Phase.Non_Duty_Day_Curfew_To)) or\
-                                                (schedule[date] =='Duty Day' and schedule[tomorrow_date] == 'Duty Day' and (now_time > student.Phase.Duty_Day_Curfew_From or now_time < student.Phase.Duty_Day_Curfew_To))):
+            if ((schedule[date] == 'Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and now_time < student.Phase.Duty_Day_Curfew_To) or\
+                                            (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Duty Day' and now_time > student.Phase.Duty_Day_Curfew_From) or\
+                                            (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and (now_time > student.Phase.Non_Duty_Day_Curfew_From or now_time < student.Phase.Non_Duty_Day_Curfew_To)) or\
+                                            (schedule[date] =='Duty Day' and schedule[tomorrow_date] == 'Duty Day' and (now_time > student.Phase.Duty_Day_Curfew_From or now_time < student.Phase.Duty_Day_Curfew_To))):
 
-                    naughty = Violation.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
-                    naughty.save()
+                naughty = Violation.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
+                naughty.save()
 
 
         all_students = [s for s in Student.objects.all()]
@@ -193,7 +191,7 @@ def checkinout(request):
 
             if student not in curfew:
 
-                if student.Building.Curfew_Applies == True and now > student.Time_24_hr and student.Commanders_Pass == False and student.Form_4392 == False:
+                if student.Checked_In == False and student.Building.Curfew_Applies == True and now > student.Time_24_hr and student.Commanders_Pass == False and student.Form_4392 == False:
 
                     naughty = Violation.objects.create(Student=student, In_or_Out=student.Checked_In, Time_24_hr_Broken=True)
                     naughty.save()
@@ -248,16 +246,14 @@ def checkinoutbad(request):
 
             schedule = [student.Schedule.Monday, student.Schedule.Tuesday, student.Schedule.Wednesday, student.Schedule.Thursday,\
                         student.Schedule.Friday, student.Schedule.Saturday, student.Schedule.Sunday]
-        
-            if student.Checked_In == False and student.Commanders_Pass == False and student.Form_4392 == False and student.Building.Curfew_Applies == True:
 
-                if ((schedule[date] == 'Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and now_time < student.Phase.Duty_Day_Curfew_To) or\
-                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Duty Day' and now_time > student.Phase.Duty_Day_Curfew_From) or\
-                                                (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and (now_time > student.Phase.Non_Duty_Day_Curfew_From or now_time < student.Phase.Non_Duty_Day_Curfew_To)) or\
-                                                (schedule[date] =='Duty Day' and schedule[tomorrow_date] == 'Duty Day' and (now_time > student.Phase.Duty_Day_Curfew_From or now_time < student.Phase.Duty_Day_Curfew_To))):
+            if ((schedule[date] == 'Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and now_time < student.Phase.Duty_Day_Curfew_To) or\
+                                            (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Duty Day' and now_time > student.Phase.Duty_Day_Curfew_From) or\
+                                            (schedule[date] == 'Non Duty Day' and schedule[tomorrow_date] == 'Non Duty Day' and (now_time > student.Phase.Non_Duty_Day_Curfew_From or now_time < student.Phase.Non_Duty_Day_Curfew_To)) or\
+                                            (schedule[date] =='Duty Day' and schedule[tomorrow_date] == 'Duty Day' and (now_time > student.Phase.Duty_Day_Curfew_From or now_time < student.Phase.Duty_Day_Curfew_To))):
 
-                    naughty = Violation.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
-                    naughty.save()
+                naughty = Violation.objects.create(Student=student, In_or_Out=student.Checked_In, Curfew_Broken=True)
+                naughty.save()
 
 
         all_students = [s for s in Student.objects.all()]
@@ -267,7 +263,7 @@ def checkinoutbad(request):
 
             if student not in curfew:
 
-                if student.Building.Number == '3126' and now > student.Time_24_hr and student.Commanders_Pass == False and student.Form_4392 == False:
+                if student.Checked_In == False and student.Building.Curfew_Applies == True and now > student.Time_24_hr and student.Commanders_Pass == False and student.Form_4392 == False:
 
                     naughty = Violation.objects.create(Student=student, In_or_Out=student.Checked_In, Time_24_hr_Broken=True)
                     naughty.save()
